@@ -40,12 +40,17 @@ form {
   width: 100%;
   text-decoration: none;
   right: 0;
+  height: fit-content;
   text-align: center;
   padding: 10px 20px 10px 20px;
   margin-right: 10px;
   align-items: center;
   border-radius: 5px;
+  border: none;
   cursor: pointer;
+}
+.button_register:hover {
+  background-color: #5c007a;
 }
 
 .modal {

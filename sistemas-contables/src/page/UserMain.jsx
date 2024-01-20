@@ -2,7 +2,7 @@ import { Employees } from '../components/Employees';
 import { useState, useEffect } from 'react';
 import '../css/page/UserMain.css';
 import { Link } from 'react-router-dom';
-
+import * as XLSX from 'xlsx';
 export function UserMain() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,26 +12,56 @@ export function UserMain() {
 
 
 
-  const exel = () => {
-    console.log('Generando excel');
+  const exel = async () => {
+    try {
+      const workbook = XLSX.utils.book_new();
+      const modifiedEmployees = employees.map(employee => {
+        return {
+          ...employee,
+          'Días de vacaciones': calculateVacationDays(employee.años_trabajados),
+          'Salario diario': employee.salario_mensual / 30,
+          'Salario mensual bruto': employee.salario_mensual,
+          'Salario Quincenal': calculateSalary_15(employee.salario_mensual),
+          'Sueldo neto con primas vacacionales': calculateNetSalary(employee.salario_mensual, calculateVacationDays(employee.yearsOfWork))
+        };
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(modifiedEmployees);
+
+      // Aplicar estilos a todas las celdas
+      const cellStyle = { numFmt: '#,##0.00', alignment: { horizontal: 'right' } };
+      const range = XLSX.utils.decode_range(worksheet['!ref']);
+      for (let row = range.s.r; row <= range.e.r; row++) {
+        for (let col = range.s.c; col <= range.e.c; col++) {
+          const cellAddr = XLSX.utils.encode_cell({ r: row, c: col });
+          worksheet[cellAddr].s = cellStyle;
+        }
+      }
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Empleados');
+      await XLSX.writeFile(workbook, 'empleados.xlsx');
+    } catch (error) {
+      console.error('Error al generar el archivo Excel', error);
+    }
   };
+
+
 
   const searchEmployee = async () => {
     try {
-      if (!searchId.trim() || searchId === 0  || searchId === '1') {
-        // Si el campo de búsqueda está en blanco, cargar la lista completa de empleados
+      if (!searchId.trim() || searchId === 0 || searchId === '1') {
         getEmployees();
       } else {
         const response = await fetch(`https://employess.onrender.com/api/v1/empleados/${searchId}`);
         const employeeData = await response.json();
-  
+
         if (employeeData) {
           const currentYear = new Date().getFullYear();
           const updatedEmployee = {
             ...employeeData,
             yearsOfWork: currentYear - new Date(employeeData.fecha_ingres).getFullYear(),
           };
-  
+
           setEmployees([updatedEmployee]);
         } else {
           setSearchId("");
@@ -145,7 +175,7 @@ export function UserMain() {
           <Link onClick={exel} className="register_option exel">
             Generar excel
           </Link>
-          <Link className="register_option exel">Pagos de quincena</Link>
+
         </div>
 
       </nav>
