@@ -1,11 +1,17 @@
 import PropTypes from 'prop-types';
 import '../css/components/user.css';
-export function Employees({ nombre, fecha_ingres, puesto, salario_mensual, user, modalInfo }) {
+export function Employees({ id ,nombre, fecha_ingres, puesto, salario_mensual, user, modalInfo }) {
   return (
     <>
       <article className="employe">
+
+
         <img src={user} alt="Logo de usuario" />
         <h3 className='employe_name '>{nombre}</h3>
+        <div className="employe_content_flex folio">
+          <p className='employe_state'>ID</p>
+          <p className='employe_fech'>{id}</p>
+        </div>
         <div className="employe_content_flex"><p className='employe_state'>Ingreso:</p>
           <p className='employe_fech'>{fecha_ingres}</p>
 
@@ -27,6 +33,7 @@ export function Employees({ nombre, fecha_ingres, puesto, salario_mensual, user,
 }
 
 Employees.propTypes = {
+  id: PropTypes.number,
   nombre: PropTypes.string,
   fecha_ingres: PropTypes.string,
   puesto: PropTypes.string,

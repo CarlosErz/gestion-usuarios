@@ -7,16 +7,34 @@ export function UserMain() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
+  const [searchId, setSearchId] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+
 
   const exel = () => {
     console.log('Generando excel');
   };
 
+  const searchEmployee = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/empleados/${searchId}`);
+      const employeeData = await response.json();
+
+      // Manejar la respuesta según sea necesario
+      console.log("Empleado encontrado:", employeeData);
+    } catch (error) {
+      console.error('Error al buscar empleado', error);
+    }
+  };
+
+
+
   const getEmployees = async () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/api/v1/empleados');
       const employeesData = await response.json();
+
 
       // Agregar el cálculo de años de trabajo a cada empleado
       const updatedEmployees = employeesData.map((employee) => {
@@ -34,16 +52,57 @@ export function UserMain() {
   };
 
   const calculateVacationDays = (yearsOfWork) => {
-    if (yearsOfWork <= 0) return 0;
-    if (yearsOfWork <= 5) return 12 + (yearsOfWork - 1) * 2;
-    if (yearsOfWork <= 10) return 22 + (yearsOfWork - 6) * 2;
-    return 24 + Math.floor((yearsOfWork - 11) / 5) * 2;
+    switch (yearsOfWork) {
+      case 1:
+        return 12;
+      case 2:
+        return 14;
+      case 3:
+        return 16;
+      case 4:
+        return 18;
+      case 5:
+        return 20;
+      case 6:
+        return 20;
+      case 7:
+        return 20;
+      case 8:
+        return 20;
+      case 9:
+        return 20;
+      case 10:
+        return 22;
+
+      case 11:
+        return 22;
+      case 12:
+        return 22;
+      case 13:
+        return 22;
+      case 14:
+        return 22;
+      case 15:
+        return 22;
+      case 16:
+        return 22;
+      case 17:
+        return 22;
+      case 18:
+        return 22;
+      case 19:
+        return 22;
+    }
   };
+  const calculateSalary_15 = (salary) => {
+    return salary / 2;
+  }
 
   const calculateNetSalary = (salary, vacationDays) => {
     const salaryDaily = salary / 30; // Assuming a month has 30 days
     const totalSalary = salaryDaily * vacationDays;
-    return totalSalary * 0.25 + totalSalary;
+
+    return totalSalary * 0.25 + calculateSalary_15(salary);
   };
 
   useEffect(() => {
@@ -53,14 +112,31 @@ export function UserMain() {
   return (
     <>
       <nav className="employess_navegation">
-        <input type="search" />
-        <Link className="register_option" to="/register">
-          Registro
-        </Link>
-        <Link onClick={exel} className="register_option exel">
-          Generar excel
-        </Link>
-        <Link className="register_option exel">Pagos de quincena</Link>
+        <div className="content_search">
+          <label >ID</label>
+
+          <input
+            type="search"
+            placeholder='Ingresa el ID del empleado'
+            value={searchId}
+            onChange={(event) => setSearchId(event.target.value)}
+          />
+
+          <button className='btn' onClick={searchEmployee}>Buscar</button>
+
+
+        </div>
+
+        <div className="nav_buttons">
+          <Link className="register_option" to="/register">
+            Registro
+          </Link>
+          <Link onClick={exel} className="register_option exel">
+            Generar excel
+          </Link>
+          <Link className="register_option exel">Pagos de quincena</Link>
+        </div>
+
       </nav>
       <h1 className="title">Lista de empleados</h1>
 
@@ -71,6 +147,7 @@ export function UserMain() {
           {employees.map((employee) => (
             <Employees
               key={employee.id}
+              id={employee.id}
               user={`https://api.dicebear.com/7.x/initials/svg?seed=${employee.nombre}`}
               nombre={employee.nombre}
               fecha_ingres={employee.fecha_ingres}
@@ -78,7 +155,6 @@ export function UserMain() {
               salario_mensual={employee.salario_mensual}
               on
               modalInfo={() => {
-                console.log('Más información de', employee.nombre);
                 setSelectedEmployee(employee);
                 setModal(true);
               }}
@@ -88,16 +164,26 @@ export function UserMain() {
       )}
       {modal && selectedEmployee && (
         <div className="modal">
-          <button className="modal_close" onClick={() => setModal(false)}>
-            X
-          </button>
+
           <div className="modal_content">
+            <button className="modal_close" onClick={() => setModal(false)}>
+              X
+            </button>
             <h2 className="modal_title">Información de pago</h2>
             <div className="modal_employe_info">
-              <p className="modal_text">Nombre: {selectedEmployee.nombre}</p>
-              <p className="modal_text">Días de vacaciones: {calculateVacationDays(selectedEmployee.yearsOfWork)}</p>
-              <p className="modal_text">Salario diario: {selectedEmployee.salario_mensual / 30}</p>
-              <p className="modal_text">Sueldo neto con primas vacacionales: {calculateNetSalary(selectedEmployee.salario_mensual, calculateVacationDays(selectedEmployee.yearsOfWork))}</p>
+              <img className='modal_img' src={`https://api.dicebear.com/7.x/initials/svg?seed=${selectedEmployee.nombre}`} alt="" />
+              <p className="modal_text"> Nombre: <b>{selectedEmployee.nombre}</b> </p>
+              <p className="modal_text">Días de vacaciones: {calculateVacationDays(selectedEmployee.yearsOfWork)} Dias</p>
+              <p
+                className="modal_text">Salario diario: $ {selectedEmployee.salario_mensual / 30}</p>
+              <p className="modal_text">
+                Salario mensual bruto: $ {selectedEmployee.salario_mensual}
+              </p>
+              <p className="modal_text">
+                Salario Quincenal:
+                ${calculateSalary_15(selectedEmployee.salario_mensual)}
+              </p>
+              <p className="modal_text">Sueldo neto con primas vacacionales: $    {calculateNetSalary(selectedEmployee.salario_mensual, calculateVacationDays(selectedEmployee.yearsOfWork))}</p>
             </div>
           </div>
         </div>

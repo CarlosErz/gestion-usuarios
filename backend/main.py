@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from pydantic import BaseModel
 from datetime import datetime
 from model.empleados import Empleado
-
+from fastapi import Query, Path
 DATABASE_URL = "sqlite:///./test.sqlite"
 
 Base = declarative_base()
@@ -43,6 +43,7 @@ def read_users():
         empleados = session.query(EmpleadoModel).all()
         return empleados
 
+#BUSCAR EMPLEADO POR ID
 @app.get("/api/v1/empleados/{id}", response_model=Empleado)
 def read_user(id: int):
     with SessionLocal() as session:
@@ -51,10 +52,15 @@ def read_user(id: int):
             return empleado
         raise HTTPException(status_code=404, detail="Empleado no encontrado")
 
+
+#FUNCION PARA OBTENER EL SIGUIENTE ID
 def get_next_id():
     with SessionLocal() as session:
         max_id = session.query(EmpleadoModel.id).order_by(EmpleadoModel.id.desc()).first()
-        return (max_id.id + 1) if max_id else 1
+        return (max_id.id + 1) if max_id and max_id.id else 1
+
+
+#REGISTRAR EMPLEADO
 @app.post("/api/v1/empleados", response_model=Empleado)
 def create_user(empleado: Empleado):
     try:
@@ -75,6 +81,8 @@ def create_user(empleado: Empleado):
         raise HTTPException(status_code=500, detail=f"Error interno del servidor: {e}")
 
 
+
+#ELMINAR EMPLEADO POR ID
 @app.delete("/api/v1/empleados/{id}")
 def delete_user(id: int):
     with SessionLocal() as session:

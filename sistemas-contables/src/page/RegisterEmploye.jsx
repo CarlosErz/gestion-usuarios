@@ -4,10 +4,10 @@ import '../css/page/RegisterEmploye.css'
 export function RegisterEmployee() {
   const initialFormData = { id: 0, nombre: '', fecha_ingres: '', salario_mensual: 0 };
   const [dataForm, setDataForm] = useState({ id: 0, nombre: '', fecha_ingres: '', salario_mensual: 0 });
-  const [modal , setModal] = useState(false);
+  const [modal, setModal] = useState(false);
 
 
-  
+
 
   const handleFormInput = (event) => {
     setDataForm({ ...dataForm, [event.target.name]: event.target.value });
@@ -15,28 +15,28 @@ export function RegisterEmployee() {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-  
-    const {  ...formDataWithoutId } = dataForm;
-  
+
+    const { ...formDataWithoutId } = dataForm;
+
     fetch('http://127.0.0.1:8000/api/v1/empleados', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(formDataWithoutId)  
+      body: JSON.stringify(formDataWithoutId)
     })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-      setDataForm(initialFormData);
-      setModal(true);
-      
-      // Mostrar modal en caso de éxito
-    })
-    .catch(error => console.error('Error:', error))
-    .then(response => console.log('Success:', response));
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        setDataForm(initialFormData);
+        setModal(true);
+
+        // Mostrar modal en caso de éxito
+      })
+      .catch(error => console.error('Error:', error))
+      .then(response => console.log('Success:', response));
   };
-  
+
 
   return (
     <>
@@ -79,11 +79,13 @@ export function RegisterEmployee() {
             onChange={handleFormInput}
             className="register_input"
             name="puesto"
-            
+            defaultValue={dataForm.puesto}
             value={dataForm.puesto}
             id=""
           >
-            <option value="Seleccione el puesto" selected  disabled>Seleccione el puesto</option>
+            <option value="Seleccione el puesto" disabled>
+              Seleccione el puesto
+            </option>
             <option value="Gerente Administrativo">G.administrativo</option>
             <option value="Supervisor">Supervisor</option>
             <option value="Contador">Contador</option>
