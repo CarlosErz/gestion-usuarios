@@ -21,7 +21,10 @@ class EmpleadoModel(Base):
 
 
 
-origins = ["http://localhost:5173"]
+origins = [
+  'http://localhost:5173',
+  'https://gestion-usuarios-mocha.vercel.app',
+];
 
 app = FastAPI()
 app.add_middleware(
