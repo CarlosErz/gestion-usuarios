@@ -18,7 +18,8 @@ export function RegisterEmployee() {
 
     const { ...formDataWithoutId } = dataForm;
 
-    fetch('http://127.0.0.1:8000/api/v1/empleados', {
+    fetch('https://employess.onrender.com/api/v1/empleados',
+ {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

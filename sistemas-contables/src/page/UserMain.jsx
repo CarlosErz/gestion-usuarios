@@ -18,24 +18,35 @@ export function UserMain() {
 
   const searchEmployee = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/empleados/${searchId}`);
-      const employeeData = await response.json();
-
-      // Manejar la respuesta según sea necesario
-      console.log("Empleado encontrado:", employeeData);
+      if (!searchId.trim() || searchId === 0  || searchId === '1') {
+        // Si el campo de búsqueda está en blanco, cargar la lista completa de empleados
+        getEmployees();
+      } else {
+        const response = await fetch(`https://employess.onrender.com/api/v1/empleados/${searchId}`);
+        const employeeData = await response.json();
+  
+        if (employeeData) {
+          const currentYear = new Date().getFullYear();
+          const updatedEmployee = {
+            ...employeeData,
+            yearsOfWork: currentYear - new Date(employeeData.fecha_ingres).getFullYear(),
+          };
+  
+          setEmployees([updatedEmployee]);
+        } else {
+          setSearchId("");
+          getEmployees();
+        }
+      }
     } catch (error) {
       console.error('Error al buscar empleado', error);
     }
   };
 
-
-
   const getEmployees = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/empleados');
+      const response = await fetch('https://employess.onrender.com/api/v1/empleados');
       const employeesData = await response.json();
-
-
       // Agregar el cálculo de años de trabajo a cada empleado
       const updatedEmployees = employeesData.map((employee) => {
         const currentYear = new Date().getFullYear();

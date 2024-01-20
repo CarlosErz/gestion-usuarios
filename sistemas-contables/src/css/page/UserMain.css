@@ -183,11 +183,29 @@
     grid-gap: 20px;
 
   }
+  .employess_navegation
+  {
+    flex-direction: column;
+    gap: 30px;
+    height: fit-content;
+  }
+  .content_search
+  {
+    width: 90%;
+  }
 }
 
 @media screen and (max-width: 480px) {
   .employees-container {
     grid-template-columns: 1fr;
+  }
+  .exel{
+    font-size: 12px;
+    height: fit-content;
+  }
+  .register_option{
+    font-size: 12px;
+    height: fit-content;
   }
 
 }
