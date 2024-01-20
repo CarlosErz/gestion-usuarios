@@ -1,0 +1,84 @@
+.register {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.flex_register {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.register_input {
+  height: 30px;
+  border: 1px solid #740097;
+  border-radius: 5px;
+  padding: 10px;
+  outline: none;
+  font-size: 1.2rem;
+}
+
+.register_input:focus {
+  border: 1px solid #5c007a;
+}
+
+.flex_register>select {
+  height: 50px;
+}
+
+.button_register {
+  background-color: #740097;
+  color: white;
+  width: 100%;
+  text-decoration: none;
+  right: 0;
+  text-align: center;
+  padding: 10px 20px 10px 20px;
+  margin-right: 10px;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgb(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 500px;
+  height: 300px;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.close {
+  background-color: #5c007a;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+}
