@@ -18,11 +18,11 @@ export function UserMain() {
       const modifiedEmployees = employees.map(employee => {
         return {
           ...employee,
-          'Días de vacaciones': calculateVacationDays(employee.años_trabajados),
           'Salario diario': employee.salario_mensual / 30,
           'Salario mensual bruto': employee.salario_mensual,
           'Salario Quincenal': calculateSalary_15(employee.salario_mensual),
-          'Sueldo neto con primas vacacionales': calculateNetSalary(employee.salario_mensual, calculateVacationDays(employee.yearsOfWork))
+          'Sueldo neto con primas vacacionales': calculateNetSalary(employee.salario_mensual, calculateVacationDays(employee.AñosTrabajando)),
+          'Neto a pagar con quincena': calculateNetSalary(employee.salario_mensual, calculateVacationDays(employee.AñosTrabajando)) + calculateSalary_15(employee.salario_mensual)
         };
       });
 
@@ -59,7 +59,8 @@ export function UserMain() {
           const currentYear = new Date().getFullYear();
           const updatedEmployee = {
             ...employeeData,
-            yearsOfWork: currentYear - new Date(employeeData.fecha_ingres).getFullYear(),
+            AñosTrabajando: currentYear - new Date(employeeData.fecha_ingres).getFullYear(),
+            
           };
 
           setEmployees([updatedEmployee]);
@@ -80,7 +81,7 @@ export function UserMain() {
       // Agregar el cálculo de años de trabajo a cada empleado
       const updatedEmployees = employeesData.map((employee) => {
         const currentYear = new Date().getFullYear();
-        employee.yearsOfWork = currentYear - new Date(employee.fecha_ingres).getFullYear();
+        employee.AñosTrabajando = currentYear - new Date(employee.fecha_ingres).getFullYear();
         return employee;
       });
 
@@ -92,8 +93,8 @@ export function UserMain() {
     }
   };
 
-  const calculateVacationDays = (yearsOfWork) => {
-    switch (yearsOfWork) {
+  const calculateVacationDays = (AñosTrabajando) => {
+    switch (AñosTrabajando) {
       case 1:
         return 12;
       case 2:
@@ -142,8 +143,7 @@ export function UserMain() {
   const calculateNetSalary = (salary, vacationDays) => {
     const salaryDaily = salary / 30; // Assuming a month has 30 days
     const totalSalary = salaryDaily * vacationDays;
-
-    return totalSalary * 0.25 + calculateSalary_15(salary);
+    return totalSalary * 0.25 + totalSalary;
   };
 
   useEffect(() => {
@@ -214,7 +214,7 @@ export function UserMain() {
             <div className="modal_employe_info">
               <img className='modal_img' src={`https://api.dicebear.com/7.x/initials/svg?seed=${selectedEmployee.nombre}`} alt="" />
               <p className="modal_text"> Nombre: <b>{selectedEmployee.nombre}</b> </p>
-              <p className="modal_text">Días de vacaciones: {calculateVacationDays(selectedEmployee.yearsOfWork)} Dias</p>
+              <p className="modal_text">Días de vacaciones: {calculateVacationDays(selectedEmployee.AñosTrabajando)} Dias</p>
               <p
                 className="modal_text">Salario diario: $ {selectedEmployee.salario_mensual / 30}</p>
               <p className="modal_text">
@@ -224,7 +224,11 @@ export function UserMain() {
                 Salario Quincenal:
                 ${calculateSalary_15(selectedEmployee.salario_mensual)}
               </p>
-              <p className="modal_text">Sueldo neto con primas vacacionales: $    {calculateNetSalary(selectedEmployee.salario_mensual, calculateVacationDays(selectedEmployee.yearsOfWork))}</p>
+              <p className="modal_text">Sueldo neto con primas vacacionales: $    {calculateNetSalary(selectedEmployee.salario_mensual, calculateVacationDays(selectedEmployee.AñosTrabajando))}</p>
+              <p className="modal_text">
+                Neto a pagar con quincena: 
+                ${calculateNetSalary(selectedEmployee.salario_mensual, calculateVacationDays(selectedEmployee.AñosTrabajando)) + calculateSalary_15(selectedEmployee.salario_mensual)}
+              </p>
             </div>
           </div>
         </div>
